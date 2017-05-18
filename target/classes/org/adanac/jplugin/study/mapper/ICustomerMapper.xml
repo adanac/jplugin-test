@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.adanac.jplugin.study.mapper.ICustomerMapper">
+									   
+	<insert id="insert" parameterType="org.adanac.jplugin.study.dbo.Customer" useGeneratedKeys="true" keyProperty="custId" >
+		insert into 
+			customer (cust_name,cust_address,sex,cust_level,create_date)
+			values(#{custName},#{custAddress},#{sex},#{custLevel},#{createDate})
+	</insert>
+	
+	<select id="find" resultType="org.adanac.jplugin.study.dbo.Customer">
+		select 
+			cust_id custId,
+			cust_name custName,
+			cust_address custAddress,
+			sex,
+			status,
+			cust_level custLevel,
+			create_date createDate 
+		from 
+			customer 
+		where 
+			cust_id = #{custId} 
+	</select>
+
+	<delete id="delete" >
+		delete from 
+			customer
+		where
+			cust_id = #{custId}
+	</delete>
+
+	<update id="update" parameterType="org.adanac.jplugin.study.dbo.Customer">
+		update 
+			customer 
+		set 
+			cust_id = #{custId},
+			cust_name = #{custName},
+			cust_address = #{custAddress},
+			sex = #{sex},
+			status = #{status},
+			cust_level = #{custLevel},
+			create_date = #{createDate}
+		where 
+			cust_id=#{custId}
+	</update>
+	
+	<!-- parameterType可以不写，因为mapper层加了注解@Param -->
+	<update id="updateStatus" >
+		update 
+			customer 
+		set  
+			status=#{status}
+		where 
+			cust_id=#{custId}
+	</update>
+
+	<select id="queryWithPage" resultType="org.adanac.jplugin.study.dbo.Customer">
+		select 
+			cust_id custId,
+			cust_name custName,
+			cust_address custAddress,
+			sex,
+			cust_level custLevel,
+			create_date createDate 
+		from 
+			customer 
+		where 
+			<![CDATA[
+			status  <>  'D' 
+			]]>
+		<if test="query.custId !=null  and query.custId != '' ">
+			and (cust_id = #{query.custId})
+		</if>
+		
+		<if test="query.custName !=null and query.custName != ''">
+			and (cust_name like CONCAT('%',#{query.custName},'%') ) 
+		</if>
+
+		<if test="query.custLevel !=null and  query.custLevel !=''">
+			and (cust_level = #{query.custLevel} ) 
+		</if>
+		<if test="query.status !=null and  query.status !=''">
+			and (status = #{query.status}   ) 
+		</if>
+	</select>
+	
+	<select id="queryAllCustomer" resultType="org.adanac.jplugin.study.dbo.Customer">
+		select 
+			cust_id custId,
+			cust_name custName,
+			cust_address custAddress,
+			sex,
+			cust_level custLevel,
+			create_date createDate 
+		from 
+			customer 
+		where 
+			<![CDATA[
+			status  <>  'D' 
+			]]>
+	</select>
+	
+</mapper>
